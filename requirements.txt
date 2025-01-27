@@ -1,2 +1,3 @@
 duckdb
 notebook
+parquet-tools
