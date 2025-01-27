@@ -172,3 +172,4 @@ cython_debug/
 .idea
 duck_venv
 .python-version
+data/
