@@ -21,7 +21,14 @@ def write_parquet_with_advance_options(in_parquet_path:str, out_parquet_path:str
 
 def main():
     data_path = Path.cwd().parent / "data"
-    immo_nano_ts_path = (data_path / "fr_immo_transactions.parquet").as_posix()
+    immo_valid_path = (data_path / "fr_immo_transactions_valid_ts.parquet").as_posix()
+    immo_large_row_group = (data_path / "fr_immo_transactions_single_row_groups.parquet").as_posix()
+    # 512Kb
+    max_page_size_512k = 524288
+    # 1mb
+    max_page_size_1mb = 1048576
+
+    write_parquet_with_advance_options(immo_valid_path, immo_large_row_group,max_row_group_size=999999999,max_page_size=max_page_size_1mb)
 
 
 
