@@ -57,6 +57,26 @@ def convert_parquet_to_csv(spark:SparkSession,parquet_file_path:str, csv_file_pa
     df.select(columns).coalesce(1).write.option("header",
                                 True).mode("overwrite").csv(csv_file_path)
 
+def write_parquet_with_partition(spark:SparkSession, in_parquet_path:str, out_parquet_path:str, partition_cols:list,
+                                 parqet_format_version:str="v2"):
+    """
+    This function writes a parquet file with partition columns.
+    :param parqet_format_version:
+    :param spark:
+    :param in_parquet_path:
+    :param out_parquet_path:
+    :param partition_cols:
+    :return:
+    """
+    df = spark.read.parquet(in_parquet_path)
+    (df.coalesce(1)
+     .write.partitionBy(partition_cols)
+     .mode("overwrite")
+     .option("parquet.writer.version",parqet_format_version)
+     .parquet(out_parquet_path))
+
+
+
 def main():
     spark = SparkSession.builder.master("local[4]") \
         .appName("ReadWriteParquet") \
@@ -66,10 +86,13 @@ def main():
     immo_nano_ts_path = (data_path / "fr_immo_transactions.parquet").as_posix()
     immo_micro_ts_path = (data_path / "fr_immo_transactions_clean").as_posix()
     immo_valid_parquet_path = (data_path / "fr_immo_transactions_valid_ts.parquet").as_posix()
+    immo_partition_parquet_path = (data_path / "fr_immo_transactions_with_partition").as_posix()
     immo_csv_path = (data_path / "fr_immo_transactions_clean_csv").as_posix()
 
-    convert_raw_parquet_to_valid_parquet(spark,immo_nano_ts_path, immo_micro_ts_path)
+    # convert_raw_parquet_to_valid_parquet(spark,immo_nano_ts_path, immo_micro_ts_path)
     # convert_parquet_to_csv(spark, immo_valid_parquet_path, immo_csv_path)
+
+    write_parquet_with_partition(spark, immo_valid_parquet_path, immo_partition_parquet_path,["departement","type_batiment"])
 
 
 

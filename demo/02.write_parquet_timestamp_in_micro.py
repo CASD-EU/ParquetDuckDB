@@ -4,6 +4,13 @@ import pyarrow.parquet as pq
 import pyarrow as pa
 
 def convert_nano_ts_to_micro(input_file_path:str, output_file_path:str):
+    """
+    This function takes a parquet file, find all datetime columns in type datetime64[ns](timestamp in nano seconds),
+    can convert them into type datetime64[us](timestamp in microseconds)
+    :param input_file_path:
+    :param output_file_path:
+    :return:
+    """
     df = pd.read_parquet(input_file_path, engine="pyarrow")
     # convert the nano second timestamp to micro sceond
     for col in df.select_dtypes(include=['datetime64[ns]']).columns:
