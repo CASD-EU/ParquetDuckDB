@@ -3,3 +3,6 @@ notebook
 pyarrow
 numpy
 pyspark
+pandas
+geopandas
+matplotlib
